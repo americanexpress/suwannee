@@ -98,7 +98,6 @@
         "typescript": "^3.5.1"
     },
     "scripts": {
-        "postinstall": "cd node_modules/fabric-integration && yarn && yarn build",
         "lint": "node_modules/.bin/tslint -p tsconfig.json",
         "build": "tsc -p .",
         "refresh": "rm -rf ./node_modules ./yarn.lock && yarn",
