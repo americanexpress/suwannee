@@ -4,10 +4,10 @@ node_js:
 install:
   - yarn cache clean
   - yarn install --network-concurrency 1
-  - yarn
+  - ./scripts/prepare.sh
   - yarn bootstrap
 build:
-  - yarn build:all
+  - yarn build
 script:
   - yarn test
   - yarn test:all
