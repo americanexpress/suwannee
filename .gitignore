@@ -11,8 +11,6 @@ node_modules/
 *.code-workspace
 *.log
 .*
-!.gitignore
-!.travis.yml
 # bundle
 packages/**/*.d.ts
 packages/**/*.js
@@ -30,6 +28,10 @@ yarn-error.log
 /quick-start
 /example_dist
 /example
+
+#exclude
+!.gitignore
+!.travis.yml
 
 # tests
 /test
