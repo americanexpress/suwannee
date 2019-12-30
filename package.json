@@ -102,7 +102,7 @@
         "test:e2e": "./node_modules/.bin/mocha  ./__test__/e2e/*.e2e-spec.ts  -c ./example.config.json --require ts-node/register --timeout 10000 --exit",
         "test:e2e:all": "./node_modules/.bin/lerna run test:e2e --concurrency=1 --stream",
         "docs": "./node_modules/.bin/typedoc --out docs --mode modules",
-        "bootstrap": "./node_modules/.bin/lerna bootstrap && cd ./node_modules/fabric-inte"
+        "bootstrap": "./node_modules/.bin/lerna bootstrap"
     },
     "keywords": [
         "[baas",
