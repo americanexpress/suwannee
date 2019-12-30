@@ -11,8 +11,6 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-export const INVALID_PLATFORM = `Is invalid platform type , choose from ['fabric','corda']`;
-export const FABRIC = 'fabric';
 
 export const INVALID_CONTEXT = 'apllicationContext not found';
 
@@ -43,3 +41,5 @@ export const INVOKE_API_META_DATA = {
     (can be used to invoke chaincode invoke corda functions and corda workflows)
      according to the application config setting`
 };
+
+export const OK = 'ok';

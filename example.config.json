@@ -1,22 +1,45 @@
 {
-    "NODE_ENV": "LOCAL",
-    "PORT": 3001,
-    "API_AUTH_ENABLED": false,
-    "DOMAIN_URL": "",
-    "USE_SSL": false,
-    "SSL_KEY_PATH": "",
-    "SSL_CERT_PATH": "",
-    "SSL_CA": "",
-    "SSL_PASSPHRASE": "",
-    "SSL_PASSPHRASE_ENCODING": "",
-    "REPO": "",
-    "REPO_URL": "",
-    "API_TITLE": "",
-    "API_DESCRIPTION": "",
-    "API_SWAGGER_VERSION": "",
-    "APPLICATION_CONTEXT": "defaultchannel",
-    "PLATFORM": "fabric",
-    "PUBLIC_KEYS": "./key.json",
-    "CONNECTION_PROFILE": "./test/Config/connection.json",
-    "WALLET": "./test/Wallet/creds"
+    "api": {
+        "documentation": {
+            "description": "suwannee helps to connect to blockchain",
+            "title": "Suwannee",
+            "version": "1.0.0-alpha.2",
+            "repo": "",
+            "repoUrl": ""
+        },
+        "environment": {
+            "domainUrl": "",
+            "nodeEnv": "local",
+            "platform": "fabric",
+            "port": 3001,
+            "tlsEnable": false,
+            "tls": {
+                "ca": "",
+                "certPath": "",
+                "keyPath": "",
+                "passPhrase": "",
+                "passPhraseEncoding": "",
+                "seed": ""
+            }
+        },
+        "security": {
+            "apiAuthEnable": false,
+            "publicKeys": "/opt/suwannee/key.json"
+        }
+    },
+    "logging": {
+        "type": "prod",
+        "format": ":id :req[header] :pid :method :url :response-time   :status"
+    },
+    "dlt": {
+        "corda": {
+            "cordaUrl": "http://user1:test@localhost:8080/api/"
+        },
+        "fabric": {
+            "applicationContext": "defaultchannel",
+            "connectionProfile": "/opt/suwannee/connection-ibm.json",
+            "wallet": "/opt/suwannee/test/Wallet/creds",
+            "event_callback_auth": false
+        }
+    }
 }

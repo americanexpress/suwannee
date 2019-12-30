@@ -11,8 +11,8 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
-import { Log } from '../utils/logging/Log.service';
+import {ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus} from '@nestjs/common';
+import {Log} from '../utils/logging/Log.service';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -27,6 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 : HttpStatus.INTERNAL_SERVER_ERROR;
 
         const errorResponse = {
+            message: exception.message.error || exception.message,
             path: request.url,
             statusCode: status,
             timestamp: new Date().toISOString(),
@@ -40,7 +41,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             timestamp: new Date().toISOString(),
 
         });
-        Log.hlf.error(errorResponse);
+        Log.suwannee.error(errorResponse);
 
     }
 }

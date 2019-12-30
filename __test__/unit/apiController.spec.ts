@@ -11,17 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import { Test } from '@nestjs/testing';
-import { ApiController } from './../../src/api/Api.controller';
-import { ApiService } from './../../src/api/Api.service';
-import { FabricService } from './../../src/api/services/fabric/Fabric.service';
-import { MockGateway, MockFabricService } from './__mocks__/mock';
-import chai, { expect } from 'chai';
-import { describe, beforeEach, it } from 'mocha';
+import {Test} from '@nestjs/testing';
+import {ApiController} from './../../src/api/Api.controller';
+import {ApiService} from './../../src/api/Api.service';
+import chai, {expect} from 'chai';
+import {describe, beforeEach, it} from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
-import fabricIntegration from 'fabric-integration';
 import sinon from 'sinon';
-import { JoiValidationPipe } from '../../src/pipe/JoiValidation.pipe';
+
 
 chai.use(chaiAsPromised);
 
@@ -34,9 +31,7 @@ describe('#ApiController', () => {
         const module = await Test.createTestingModule({
             controllers: [ApiController],
             providers: [
-                { provide: ApiService, useValue: MockApiService },
-                { provide: fabricIntegration, useValue: MockGateway },
-                { provide: FabricService, useValue: MockFabricService }
+                {provide: ApiService, useValue: MockApiService},
             ]
         }).compile();
 
@@ -70,6 +65,12 @@ describe('#ApiController', () => {
             };
             expect(await apiController.invoke(body)).to.eql(result);
             MockApiService.invoke.reset();
+        });
+
+    });
+    describe('##Health check', () => {
+        it('3)should return ok', async () => {
+            expect(await apiController.healthCheck()).to.eql('ok');
         });
 
     });

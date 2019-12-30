@@ -5,59 +5,21 @@
 </p>
 
 suwannee is a RESTful API to be used for blockchain connectivity. It has been tested and used to integrate with
-Hyperledger Fabric peers directly, as well as Blockchain-as-a-Service (BaaS) providers. Longer term plan is to 
-facilitate integration with multiple Distributed Ledger (DLT) solutions, such as R3 Corda (coming soon).
+Hyperledger Fabric peers directly, as well as Blockchain-as-a-Service (BaaS) providers. Longer term plan is to
+facilitate integration with multiple Distributed Ledger (DLT) solutions, such as Corda or [add new blockchain support](create-package.md)
 
-The goal of the framework is to enable direct smart contract calls from any programming language and/or platform. 
+<p align="center">
+  <img width="600" src="./assets/suwannee.svg">
+</p>
+
+## Why
+
+The goal of the framework is to enable direct smart contract calls from any programming language and/or platform.
 The obvious solution to the problem was to make it possible through RESTful calls.
 
-Here is an example of how to call suwannee APIs from client applications:
+## Cool , does this support any blockchain
 
-```javascript
-var request = require("request");
-
-var options = { 
-  method: 'GET',
-  url: 'http://localhost:3001/api/blockchain',
-  qs: 
-   { applicationId: 'marbles',
-     applicationContext: 'defaultChannel',
-     identity: 'bcUser',
-     functionName: 'getAll' },
-  headers: 
-   { 
-     Authorization: 'Bearer eyJ0e...fojdRM'
-   } 
-  };
-
-request(options, function (error, response, body) {
-  if (error) throw new Error(error);
-
-  console.log(body);
-});
-```
-
-The above request invokes `getAll` method of `marbles` smart contract (chaincode) that is deployed on channel
-`defaultChannel`. In this case the HTTP method used is GET, since it is a query, however, POST method is also 
-available.
-
-```javascript
-var options = { 
-  method: 'POST',
-  url: '...',
-  headers: 
-   { ... },
-  body: 
-   { applicationId: 'marbles',
-     applicationContext: 'defaultChannel',
-     identity: 'bcUser',
-     functionName: 'move',
-     functionArguments: [ 'a', 'b', '10' ] 
-   },
-};
-```
-
-Above example is for a chaincode "Invoke". Since it's an update, Http method=POST. This example also shows how to pass arguments to the smart contract.
+Add new blockchain support by following this [tutorial](create-package.md)
 
 ## Build Status
 
@@ -66,11 +28,13 @@ a GRPC service provided by a Blockchain-as-a-Service solution.
 
 One can perform effortlessly a chaincode "Invoke" or a "Query" without worrying about the back end.
 
+## How to use it
+
 ### Prerequisites
 
 The prerequisites are:
 
-```
+```markdown
 Node v8.15.0
 yarn
 ```
@@ -81,15 +45,19 @@ A step by step series of examples that tell you how to get a development env run
 
 Download and Install
 
-```
+```bash
 git clone repo_url
 cd suwannee
 yarn
+yarn bootstrap
 yarn build
-yarn test
+yarn build:all
+yarn test:all
 yarn test:e2e ❗️
 yarn link
 (optional)chmod +x /usr/local/bin/suwannee
+or
+yarn start start -c ./PATH_TO/CONFIG.json
 ```
 
 ## Running tests and eslint
@@ -111,76 +79,94 @@ Based on integration networks you have access to you can run following commands
 
 Run above command to generate documentation. You can find documentation under `docs`directory. Open `docs/index.html`in you browser to see documentation.
 
-## Usage
-
-`$ npm install --save suwannee`
-or
-`$ yarn add suwannee`
-
 ## To start the Rest API
 
-```
-$ suwannee  start -c <path_to_config_file>
-```
+change directory to suwannee core and run
 
-## JWT Authentication
+If the package is  hosted in npm registry
 
-#### Key generation
-
-Replace clientId with consumer id
-
-```
-$ ssh-keygen -t rsa -b 4096 -m PEM -f clientId.key -P ""
-$ openssl rsa -in clientId.key -pubout -outform PEM -out clientId.key.pub
-$ openssl base64 -in clientId.key.pub -out clientId.encoded.key.pub
+```bash
+ yarn add <blockchain-package-name> -W
 ```
 
-#### Key File structure
+ or
 
-```
-[
-  {
-    "clientId": "consumer id",
-    "key": "content of clientId.encoded.key.pub"
-  }
-]
+If the package is not hosted in npm registry
+
+``` bash
+yarn add <blockchain-package-name>@file:<package-file-path> -W
 ```
 
-#### Token structure
+create a `.env` file in the project root and add `PLATFORM = '<BLOCKCHAIN-PACKAGE-NAME-HERE>'`
 
-```
-HEADER:ALGORITHM & TOKEN TYPE
+```bash
+yarn start start -c '<path to config file>'
+  ___   _   _  __      __   __ _   _ __    _ __     ___    ___ 
+ / __| | | | | \ \ /\ / /  / _` | | '_ \  | '_ \   / _ \  / _ \
+ \__ \ | |_| |  \ V  V /  | (_| | | | | | | | | | |  __/ |  __/
+ |___/  \__,_|   \_/\_/    \__,_| |_| |_| |_| |_|  \___|  \___|
 
-{
-  "alg": "ES256",
-  "typ": "JWT"
-}
-
-PAYLOAD:Name of client & The time the JWT was issued
-
-{
-"clientId" : "nameofclient",
-"iat" : 1516239022
-}
-
-SIGNATURE : Generated while signing
-{
-  xyz
-}
+{"@message":"\u001b[32mBlockchain connector starting... \u001b[39m","@timestamp":"2019-10-29T18:02:09.096Z","@fields":{"level":"\u001b[32minfo\u001b[39m","label":"[suwannee]"}}
 ```
 
-#### Token generation
+which will start swagger-ui on http://localhost:3001
 
+<p align="center">
+<img width="600" src="./assets/swagger.png">
+</p>
+
+Here is an example of how to call suwannee APIs from client applications:
+
+```js
+var request = require("request");
+
+var options = {
+  method: 'GET',
+  url: 'http://localhost:3001/api/blockchain',
+  qs:
+   { applicationId: 'marbles',
+     applicationContext: 'defaultChannel',
+     identity: 'bcUser',
+     functionName: 'getAll'
+     },
+  headers:
+   {
+     Authorization: 'Bearer eyJ0e...fojdRM'
+   }
+  };
+
+request(options, function (error, response, body) {
+  if (error) throw new Error(error);
+
+  console.log(body);
+});
 ```
-$ npm install -g jwtgen
-$ jwtgen -a RS256 -p /path/to/clientId.key -c "clientId=consumerid"
+
+The above request invokes `getAll` method of `marbles` smart contract (chaincode) that is deployed on channel
+`defaultChannel`. In this case the HTTP method used is GET, since it is a query, however, POST method is also 
+available.
+
+```js
+let options = {
+  method: 'POST',
+  url: '...',
+  headers:
+   { ... },
+  body:
+   { applicationId: 'marbles',
+     applicationContext: 'defaultChannel',
+     identity: 'bcUser',
+     functionName: 'move',
+     functionArguments: [ 'a', 'b', '10' ]
+   },
+};
 ```
 
-#### Authorization Header format
+Above example is for a chaincode "Invoke". Since it's an update, Http method=POST. This example also shows how to pass arguments to the smart contract.
 
-Authorization : Bearer < jwtToken >
+## JWT Auth set up instructions [here](jwt-authentication.md)
 
-## Application configuration 
+## Application configuration
 
 [Here](./example.config.json) is the structure of the config file.
 
@@ -198,7 +184,6 @@ To run end to end tests you would require connection_profile.json and creds in t
 * Tajamul Fazili <tajamul.fazili@aexp.com> [TajamuFazili](https://github.com/tajamulfazili)
 * Chandrakanth Mamillapalli [chandrakanthm](https://github.com/chandrakanthm)
 * Andras L Ferenczi <andras.l.ferenczi@aexp.com> [andrasfe](https://github.com/andrasfe)
-
 
 ## Contributing
 

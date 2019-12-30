@@ -11,14 +11,15 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import { Body, Controller, Get, Post, Query, UseFilters, UsePipes } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiUseTags } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '../filters/HttpExecption.filter';
-import { ApiService } from './Api.service';
-import { RequestPayloadDto } from './model/RequestPayload.dto';
-import { JoiValidationPipe } from '../pipe/JoiValidation.pipe';
-import { RequestPayloadSchema } from './model/RequestPayload.schema';
-import { QUERY_RESPONE, QUERY_PATH, QUERY_API_META_DATA, INVOKE_RESPONE, INVOKE_PATH, INVOKE_API_META_DATA } from './api.constants';
+import {Body, Controller, Get, Post, Query, UseFilters, UsePipes} from '@nestjs/common';
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiUseTags} from '@nestjs/swagger';
+import {HttpExceptionFilter} from '../filters/HttpExecption.filter';
+import {ApiService} from './Api.service';
+import {InvokeRequestPayloadDto} from './model/InvokeRequestPayload.dto';
+import {JoiValidationPipe} from '../pipe/JoiValidation.pipe';
+import {InvokeRequestPayloadSchema, QueryRequestPayloadSchema} from './model/RequestPayload.schema';
+import {QUERY_RESPONE, QUERY_PATH, QUERY_API_META_DATA, INVOKE_RESPONE, INVOKE_PATH, INVOKE_API_META_DATA, OK} from './api.constants';
+import {QueryRequestPayloadDto} from './model/QueryRequestPayload.dto';
 
 /**
  * Class of ApiController
@@ -38,8 +39,11 @@ export class ApiController {
      *
      * @memberof ApiController
      */
-    constructor(private apiService: ApiService) { }
-
+    constructor (private apiService: ApiService) {}
+    @Get()
+    public healthCheck(): string {
+        return OK;
+    }
     /**
      * Query chaincode (Available when platform is set to Fabric)
      * @param {requestPayloadDto} RequestPayloadDto
@@ -49,15 +53,16 @@ export class ApiController {
     @Get(QUERY_PATH)
     @ApiOperation(QUERY_API_META_DATA)
     @ApiResponse(QUERY_RESPONE)
-    @UsePipes(new JoiValidationPipe(RequestPayloadSchema))
-    public query(@Query() requestPayloadDto: RequestPayloadDto): Promise<any> {
+    @UsePipes(new JoiValidationPipe(QueryRequestPayloadSchema))
+
+    public query(@Query() requestPayloadDto: QueryRequestPayloadDto): Promise<any> {
 
         return this.apiService.query(
-            requestPayloadDto.applicationId,
-            requestPayloadDto.applicationContext,
-            requestPayloadDto.identity,
             requestPayloadDto.functionName,
             requestPayloadDto.functionArguments,
+            requestPayloadDto.applicationId,
+            requestPayloadDto.applicationContext,
+            requestPayloadDto.identity
         );
     }
 
@@ -72,14 +77,17 @@ export class ApiController {
     @Post(INVOKE_PATH)
     @ApiOperation(INVOKE_API_META_DATA)
     @ApiResponse(INVOKE_RESPONE)
-    @UsePipes(new JoiValidationPipe(RequestPayloadSchema))
-    public invoke(@Body() requestPayloadDto: RequestPayloadDto): Promise<any> {
+    @UsePipes(new JoiValidationPipe(InvokeRequestPayloadSchema))
+    public invoke(@Body() requestPayloadDto: InvokeRequestPayloadDto): Promise<any> {
         return this.apiService.invoke(
+            requestPayloadDto.functionName,
+            requestPayloadDto.functionArguments,
             requestPayloadDto.applicationId,
             requestPayloadDto.applicationContext,
             requestPayloadDto.identity,
-            requestPayloadDto.functionName,
-            requestPayloadDto.functionArguments
+            requestPayloadDto.transientData,
+            requestPayloadDto.eventName,
+            requestPayloadDto.callBackUrl
         );
     }
 }

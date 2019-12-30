@@ -11,14 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import { Module } from '@nestjs/common';
-import { ApiModule } from './api/Api.module';
-import { ConfigModule } from './common/config/Config.module';
-
+import {Module} from '@nestjs/common';
+import {ApiModule} from './api/Api.module';
+import {ConfigModule} from 'nestjs-config';
+import path from 'path';
 @Module({
     imports: [
-        ApiModule,
-        ConfigModule,
-    ],
+        ConfigModule.load(path.resolve(__dirname, '**/!(*.d).config.{ts,js}')) as any,
+        ApiModule
+    ]
 })
-export class ApplicationModule { }
+export class ApplicationModule {}

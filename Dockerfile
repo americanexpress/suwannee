@@ -1,35 +1,30 @@
+#/**
+#  * Copyright 2019 American Express Travel Related Services Company, Inc.
+#  *
+#  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+#  * in compliance with the License. You may obtain a copy of the License at
+#  *
+#  * http://www.apache.org/licenses/LICENSE-2.0
+#  *
+#  * Unless required by applicable law or agreed to in writing, software distributed under the License
+#  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#  * or implied. See the License for the specific language governing permissions and limitations under
+#  * the License.
+#  */
+
 # --- Base Node ---
 FROM node:carbon AS base
-RUN mkdir -p /var/www
-RUN mkdir -p /var/log/portal-service
-ADD package.json /var/www
-ADD .yarnrc /var/www/.yarnrc
-# ADD env /var/www/.env
-# use changes to package.json to force Docker not to use the cache
-# when we change our application's nodejs dependencies:
 
-# --- Dependencies ---
-FROM base AS dependencies
-COPY . /tmp/
-# RUN cd /tmp && yarn
-# RUN cp -R /tmp/node_modules /tmp/prod_node_modules
-RUN cd /tmp && yarn
+COPY . /opt/suwannee
+RUN cd /opt/suwannee/packages/fabric && yarn
+RUN cd /opt/suwannee/packages/fabric && yarn build
+RUN cd /opt/suwannee && yarn
+RUN cd /opt/suwannee && yarn build
 
-# --- Build ---
-FROM dependencies AS build
-COPY ./src /tmp/src
-RUN cd /tmp && yarn run build
-RUN mkdir -p /tmp/dist/config/creds
+WORKDIR /opt/suwannee
 
-# --- Release ---
-FROM base AS release
-WORKDIR /var/www
-# create empty .env file for dotenv lib
 RUN touch .env
-COPY --from=dependencies /tmp/prod_node_modules ./node_modules
-COPY --from=build /tmp/dist ./dist
+ENV PLATFORM='/opt/suwannee/packages/fabric'
 
-VOLUME /var/log/portal-service
-EXPOSE 3000
-CMD [ "yarn", "start", "start -c ./example.config.json" ]
-
+EXPOSE 3001
+CMD [ "node", "dist/main.js" ,"start","-c","/opt/suwannee/example.config.json"]

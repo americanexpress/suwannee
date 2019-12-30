@@ -13,38 +13,23 @@
  * the License.
  */
 import chalk from 'chalk';
-import { command } from 'commander';
 import figlet from 'figlet';
-import { API_STARTED, APP_HEADER, START_CMD, START_CMD_DESCRIPTION, START_CMD_ALIAS, CONFIG_FLAG, CONFIG_FLAG_DESCRIPTION, TEST_CMD, CLI_VERSION, APP_NAME, BANNER_LAYOUT } from './app.constants';
-import { AppService } from './App.service';
-import { ConfigService } from './common/config/Config.service';
-import { Log } from './utils/logging/Log.service';
+import {AppConstants} from './app.constants';
+import {AppService} from './App.service';
+import {Log} from './utils/logging/Log.service';
+import {ConfigFlag, AppConfig} from './configFlag';
 
-console.log(chalk.blue(figlet.textSync(APP_HEADER, { horizontalLayout: BANNER_LAYOUT })));
-const program = command(TEST_CMD);
-program.version(CLI_VERSION).description(APP_NAME);
-
-/**
- * Add flags
- */
+console.log(chalk.blue(figlet.textSync(AppConstants.APP_HEADER, {horizontalLayout: AppConstants.BANNER_LAYOUT})));
+const program = ConfigFlag;
+program.version(AppConstants.CLI_VERSION).description(AppConstants.APP_NAME);
+export const ApplicationConfig = AppConfig;
 program
-    .option(CONFIG_FLAG, CONFIG_FLAG_DESCRIPTION)
-    .parse(process.argv);
-
-export const ApplicationConfig = program.config;
-export const CordaUrl = program.url;
-
-/**
- * Start command
- */
-program
-    .command(START_CMD)
-    .alias(START_CMD_ALIAS)
-    .description(START_CMD_DESCRIPTION)
+    .command(AppConstants.START_CMD)
+    .alias(AppConstants.START_CMD_ALIAS)
+    .description(AppConstants.START_CMD_DESCRIPTION)
     .action(() => {
-        Log.suwannee.info(API_STARTED);
-        new AppService(new ConfigService()).bootstrap();
+        Log.suwannee.info(AppConstants.API_STARTED);
+        new AppService().bootstrap();
 
     });
-
 program.parse(process.argv);

@@ -1,0 +1,48 @@
+{
+    "name": "@suwannee/dlt",
+    "version": "1.0.0",
+    "contributors": [
+        "Chandrakanth Mamillapalli"
+    ],
+    "license": "Apache-2.0",
+    "description": "This helps you to connect to your BAAS provider through RestAPI",
+    "main": "./dist/DLTService.interface.d.ts",
+    "preferGlobal": true,
+    "files": [
+        "**/*"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "lint": "node_modules/.bin/tslint -p tsconfig.json",
+        "build": "tsc -p .",
+        "refresh": "rm -rf ./node_modules ./yarn.lock && yarn",
+        "start": "ts-node -r tsconfig-paths/register src/main.ts",
+        "test": "echo nothing to test here",
+        "test:e2e": "./node_modules/.bin/mocha  ./__test__/e2e/*.e2e-spec.ts  -c ./example.config.json --require ts-node/register --timeout 10000 --exit",
+        "docs": "./node_modules/.bin/typedoc --out docs --mode modules"
+    },
+    "devDependencies": {
+        "@types/node": "^12.12.14",
+        "tslint": "^5.20.0",
+        "typescript": "^3.5.1"
+    },
+    "keywords": [
+        "[baas",
+        "suwannee",
+        "blockchain",
+        "RestAPI",
+        "Tools",
+        "BAAS",
+        "connector",
+        "DLT]"
+    ],
+    "husky": {
+        "hooks": {
+            "pre-commit": "yarn lint",
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+            "preparecommitmsg": "git-hooks/prepare-commit-msg ${GIT_PARAMS}"
+        }
+    }
+}

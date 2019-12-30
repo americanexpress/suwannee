@@ -1,0 +1,122 @@
+{
+    "name": "@suwannee/corda",
+    "version": "1.0.0",
+    "contributors": [
+        "Andras L Ferenczi",
+        "Chandrakanth Mamillapalli",
+        "Tajamul fazili"
+    ],
+    "license": "Apache-2.0",
+    "description": "This helps you to connect to your BAAS provider through RestAPI",
+    "main": "./dist/index.js",
+    "preferGlobal": true,
+    "files": [
+        "/dist"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "dependencies": {
+        "@nestjs/common": "^6.7.2",
+        "body-parser": "^1.18.3",
+        "braid-client": "^3.3.1-20181219142722288",
+        "nestjs-config": "^1.4.4",
+        "reflect-metadata": "^0.1.10",
+        "rxjs": "^6.3.3"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^7.5.2",
+        "@commitlint/config-conventional": "^7.5.0",
+        "@types/chai": "^4.1.7",
+        "@types/chai-as-promised": "^7.1.0",
+        "@types/dotenv": "^6.1.1",
+        "@types/node": "^12.12.14",
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "husky": "^1.3.1",
+        "mocha": "^5.2.0",
+        "nodemon": "^1.18.9",
+        "nyc": "^13.3.0",
+        "prettier": "^1.14.3",
+        "should": "^13.2.3",
+        "sinon": "^7.3.0",
+        "source-map-support": "^0.5.10",
+        "ts-node": "^6.2.0",
+        "tsconfig-paths": "^3.6.0",
+        "tslint": "^5.20.0",
+        "typedoc": "^0.14.2",
+        "typescript": "^3.5.1"
+    },
+    "scripts": {
+        "lint": "node_modules/.bin/tslint -p tsconfig.json",
+        "build": "tsc -p .",
+        "refresh": "rm -rf ./node_modules ./yarn.lock && yarn",
+        "start": "ts-node -r tsconfig-paths/register src/main.ts",
+        "test": "NODE_ENV='test' nyc mocha  ./__test__/unit/*.spec.ts --exit",
+        "test:e2e": "mocha  ./__test__/e2e/*.e2e-spec.ts  -c ./example.config.json --require ts-node/register --timeout 10000 --exit",
+        "docs": "typedoc --out docs --mode modules"
+    },
+    "keywords": [
+        "[baas",
+        "suwannee",
+        "blockchain",
+        "RestAPI",
+        "Tools",
+        "BAAS",
+        "Corda",
+        "connector",
+        "DLT]"
+    ],
+    "nyc": {
+        "include": [
+            "src/**/*.ts",
+            "src/**/*.tsx"
+        ],
+        "extension": [
+            ".ts",
+            ".tsx"
+        ],
+        "require": [
+            "ts-node/register"
+        ],
+        "reporter": [
+            "text",
+            "lcov",
+            "html"
+        ],
+        "exclude": [
+            "docs",
+            "coverage",
+            "__test__",
+            "*.module.ts",
+            "dist",
+            "config",
+            "gulpfile.js",
+            "src/main.ts",
+            "src/index.ts",
+            "src/filters",
+            "src/App.service.ts",
+            "src/Corda.module.ts",
+            "src/middleware/Jwt.middleware.ts",
+            "src/utils/logging/Loggers.ts",
+            "src/Braidclient.service.ts",
+            "src/common/config/interfaces"
+        ],
+        "per-file": false,
+        "lines": 100,
+        "statements": 100,
+        "functions": 100,
+        "branches": 85,
+        "check-coverage": true,
+        "all": true,
+        "sourceMap": true,
+        "instrument": true
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "yarn lint",
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+            "preparecommitmsg": "git-hooks/prepare-commit-msg ${GIT_PARAMS}"
+        }
+    }
+}

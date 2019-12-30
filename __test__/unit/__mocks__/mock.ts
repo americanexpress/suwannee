@@ -11,21 +11,10 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import Gateway from 'fabric-integration';
-import { FabricService } from '../../../src/api/services/fabric/Fabric.service';
-import { Proxy } from 'braid-client/dist/Proxy';
 import sinon from 'sinon';
-import { ConfigService } from '../../../src/common/config/Config.service';
-import Transaction from 'fabric-integration/dist/Transaction';
+import {ConfigService} from 'nestjs-config';
+import {DefaultService} from '../../../src/common/default/Default.service';
 
-export const MockTransaction: any = sinon.createStubInstance(Transaction);
-export const MockContract = {
-    createTransaction: () => MockTransaction
-};
-export const MockNetwork = {
-    getContract: fn => MockContract
-};
-export const MockGateway = sinon.createStubInstance(Gateway);
-export const MockFabricService = sinon.createStubInstance(FabricService);
-export const MockConfigService = sinon.createStubInstance(ConfigService);
-export const MockProxy = sinon.createStubInstance(Proxy);
+export const MockCordaService = sinon.createStubInstance(DefaultService);
+export const MockFabricService = sinon.createStubInstance(DefaultService);
+export const MockConfigService = new ConfigService();

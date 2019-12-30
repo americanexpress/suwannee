@@ -29,14 +29,13 @@ yarn-error.log
 /example_dist
 /example
 
-#exclude
-!.gitignore
-!.travis.yml
-
 # tests
 /test
+/benchmarks/memory
 /coverage
 **/coverage
 /.nyc_output
 **/.nyc_output
+/packages/graphql
+/benchmarks/memory
 build/config\.gypi

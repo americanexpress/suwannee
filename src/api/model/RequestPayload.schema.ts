@@ -15,10 +15,20 @@ import Joi from '@hapi/joi';
 //========================================================
 // Request payload schema to validate the request input
 //=======================================================
-export const RequestPayloadSchema: Joi.ObjectSchema = Joi.object({
+export const QueryRequestPayloadSchema: Joi.ObjectSchema = Joi.object({
+    applicationId: Joi.string(),
+    applicationContext: Joi.string(),
+    identity: Joi.string(),
+    functionName: Joi.string(),
+    functionArguments: Joi.alternatives().try(Joi.array().items(Joi.string()).allow(null, ''), Joi.string().allow(''))
+});
+export const InvokeRequestPayloadSchema: Joi.ObjectSchema = Joi.object({
     applicationId: Joi.string(),
     applicationContext: Joi.string(),
     identity: Joi.string(),
     functionName: Joi.string(),
     functionArguments: Joi.alternatives().try(Joi.array().items(Joi.string()).allow(null, ''), Joi.string().allow('')),
-});
+    transientData: Joi.object().allow(null, '').optional(),
+    eventName: Joi.string().allow(null, '').optional(),
+    callBackUrl: Joi.string()
+}).with('eventName', ['callBackUrl']);

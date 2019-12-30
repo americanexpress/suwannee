@@ -11,64 +11,57 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import { ApiService } from './../../src/api/Api.service';
-import { describe, beforeEach, it } from 'mocha';
+import {ApiService} from './../../src/api/Api.service';
+import {describe, it} from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
-import { MockFabricService, MockConfigService } from './__mocks__/mock';
-import chai, { expect } from 'chai';
+import {MockFabricService, MockConfigService, MockCordaService} from './__mocks__/mock';
+import chai, {expect} from 'chai';
+import config from '../../src/common/config/app.config';
 
 chai.use(chaiAsPromised);
 
 describe('#apiService', () => {
     let apiService: ApiService;
-
-    beforeEach(() => {
-        apiService = new ApiService(MockFabricService, MockConfigService);
-
-    });
-
     describe('#query', () => {
-        it('should return success ', async () => {
-            MockConfigService.PLATFORM = 'fabric';
-            MockFabricService.query.resolves('success');
-            return expect(apiService.query('', '', '', 'flowname', [])).eventually.to.equal('success');
-        });
-        it('should return error ', async () => {
-            MockConfigService.PLATFORM = 'fabric';
 
+        apiService = new ApiService(MockFabricService);
+        it('1 should return success ', async () => {
+            MockFabricService.query.resolves('success');
+            return expect(apiService.query('', [''], '', 'function', '')).eventually.to.equal('success');
+        });
+        it('2 should return error ', async () => {
             MockFabricService.query.rejects(new Error('error'));
-            return expect(apiService.query('', '', '', 'flowname', [])).to.be.rejected;
+            return expect(apiService.query('', [''], '', 'function', '')).to.be.rejected;
         });
-        it('should return error ', async () => {
-            MockConfigService.PLATFORM = null;
+        it('Corda invoke return success ', async () => {
+            apiService = new ApiService(MockCordaService);
+            MockConfigService.platform = 'corda';
+            MockCordaService.query.resolves('success');
+            return expect(apiService.query('', [''], '', 'function', '')).eventually.to.equal('success');
+        });
 
-            MockFabricService.query.resolves('success');
-            return expect(apiService.query('', '', '', 'flowname', [])).to.be.rejected;
-        });
-        it('should return error ', async () => {
-            MockConfigService.PLATFORM = 'TEST';
-            MockFabricService.query.resolves('success');
-            return expect(apiService.query('', '', '', 'flowname', [])).to.be.rejected;
-        });
     });
 
     describe('#invoke', () => {
         it('should return success ', async () => {
-            MockConfigService.PLATFORM = 'fabric';
+            apiService = new ApiService(MockFabricService);
             MockFabricService.invoke.resolves('success');
-            return expect(apiService.invoke('a', 'b', 'c', 'd', [])).eventually.to.equal('success');
+            return expect(apiService.invoke('a', ['b'], 'c', 'd', 'a')).eventually.to.equal('success');
         });
-
-        it('should return error ', async () => {
-            MockConfigService.PLATFORM = 'tesst';
-            MockFabricService.invoke.resolves('success');
-            return expect(apiService.invoke('a', 'b', 'c', 'd', [])).to.be.rejected;
+        it('should invoke corda return success ', async () => {
+            apiService = new ApiService(MockCordaService);
+            MockCordaService.invoke.resolves('success');
+            return expect(apiService.invoke('a', ['b'], 'c', 'd', 'e')).eventually.to.equal('success');
         });
         it('should return error ', async () => {
-            MockConfigService.PLATFORM = 'fabric';
+            apiService = new ApiService(MockFabricService);
             MockFabricService.invoke.rejects(new Error('error'));
-            return expect(apiService.invoke('a', 'b', 'c', 'd', [])).to.be.rejected;
+            return expect(apiService.invoke('a', ['b'], 'c', 'd', 'e')).to.be.rejected;
         });
+    });
+
+    describe('#test app config', () => {
+        expect(config.useSSL()).to.eqls(false);
     });
 
 });

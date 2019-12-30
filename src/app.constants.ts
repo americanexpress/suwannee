@@ -10,16 +10,36 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for the specific language governing
 permissions and limitations under the License.
 */
-export const APP_HEADER = 'suwannee';
-export const API_STARTED = `Blockchain connector starting... `;
-export const SWAGGER_URL = '/swagger';
-export const SWAGGER_STARTED = `swagger startted at http://localhost:`;
-export const START_CMD = `start`;
-export const START_CMD_DESCRIPTION = `Start BAAS Rest API`;
-export const START_CMD_ALIAS = `s`;
-export const CONFIG_FLAG = `-c, --config <ApplicationConfig>`;
-export const CONFIG_FLAG_DESCRIPTION = `-c, --config <ApplicationConfig>`;
-export const TEST_CMD = `test`;
-export const CLI_VERSION = `1.0.0`;
-export const APP_NAME = `suwannee`;
-export const BANNER_LAYOUT = `full`;
+
+export class AppConstants {
+    public static APP_HEADER = 'suwannee';
+    public static API_STARTED = `Blockchain connector starting... `;
+    public static SWAGGER_URL = '/swagger';
+    public static SWAGGER_STARTED = `swagger startted at http://localhost:`;
+    public static START_CMD = `start`;
+    public static START_CMD_DESCRIPTION = `Start BAAS Rest API`;
+    public static START_CMD_ALIAS = `s`;
+    public static CONFIG_FLAG = `-c, --config <ApplicationConfig>`;
+    public static CONFIG_FLAG_DESCRIPTION = `Application config`;
+    public static TEST_CMD = `test`;
+    public static CLI_VERSION = `1.0.0`;
+    public static APP_NAME = `suwannee`;
+    public static BANNER_LAYOUT = `full`;
+    public static LOGGER_LABEL = '[SUWANNEE]';
+    public static CONFIG = 'app.config';
+    public static CUSTOM_LOGGER_FORMAT = ':id :req[header] :pid :method :url :response-time   :status';
+    public static APP_ERROR = 'Application can not be started 😐';
+    public static HEADER = 'header';
+    public static HTTP = 'http';
+    public static HTTPS = 'https';
+    public static LOCAL = 'local';
+
+    public static AUTHORIZATION = 'Authorization';
+
+    public static CORS_ORIGIN = '*';
+
+    public static ID = 'id';
+    public static PID = 'pid';
+    public static RES_BODY = 'resbody';
+    public static REQ_BODY = 'reqbody';
+}

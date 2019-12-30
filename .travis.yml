@@ -3,9 +3,11 @@ node_js:
   - "8"
 install:
   - yarn
+  - yarn bootstrap
 build:
-  - yarn build
+  - yarn build:all
 script:
   - yarn test
+  - yarn test:all
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

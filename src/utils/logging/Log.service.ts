@@ -11,13 +11,12 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import { Logger as winlog } from 'winston';
-import { Loggers } from './Loggers';
+import {Logger as winlog} from 'winston';
+import {LoggerService} from '@suwannee/logger';
+import {AppConstants} from '../../app.constants';
 
 export class Log {
-    public static hlf: winlog = Loggers.hlf;
-    public static suwannee: winlog = Loggers.suwannee;
-    public static corda: winlog = Loggers.corda;
-    public static expressWinston: winlog = Loggers.expressWinston;
+    public static suwannee: winlog = LoggerService.getLogger(AppConstants.LOGGER_LABEL);
+    public static expressWinston: winlog = LoggerService.expressWinston;
 
 }

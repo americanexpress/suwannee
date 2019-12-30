@@ -11,20 +11,21 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import { Module, NestModule } from '@nestjs/common';
-import { MiddlewareConsumer } from '@nestjs/common/interfaces/middleware';
-import fabricIntegration from 'fabric-integration';
-import { ConfigService } from '../common/config/Config.service';
-import { JwtMiddleware } from '../middleware/Jwt.middleware';
-import { ApiController } from './Api.controller';
-import { ApiService } from './Api.service';
-import { FabricService } from './services/fabric/Fabric.service';
+import {Module, NestModule} from '@nestjs/common';
+import {MiddlewareConsumer} from '@nestjs/common/interfaces/middleware';
+import {ConfigService} from 'nestjs-config';
+import {JwtMiddleware} from '../middleware/Jwt.middleware';
+import {ApiController} from './Api.controller';
+import {ApiService} from './Api.service';
+import {BlockchainModule} from '../common/Blockchain.module';
+
 @Module({
+    imports: [BlockchainModule],
     controllers: [ApiController],
-    providers: [ApiService, fabricIntegration, FabricService, ConfigService]
+    providers: [ApiService]
 })
 export class ApiModule implements NestModule {
-    private config = new ConfigService();
+    constructor (readonly config: ConfigService) {}
     /**
      * Configure Apimodule to add middleware
      *
@@ -32,7 +33,7 @@ export class ApiModule implements NestModule {
      * @memberof ApiModule
      */
     public configure(consumer: MiddlewareConsumer): void {
-        if (this.config.isApiAuthEnabled()) {
+        if (this.config._isApiAuthEnabled()) {
             consumer.apply(JwtMiddleware).forRoutes(ApiController);
         }
     }
