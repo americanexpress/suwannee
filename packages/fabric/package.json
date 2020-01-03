@@ -27,7 +27,7 @@
         "@nestjs/common": "^6.7.2",
         "axios": "^0.19.0",
         "clear": "^0.1.0",
-        "fabric-integration": "git+https://github.com/chandrakanthm/fabric-integration.git",
+        "fabric-integration": "git+https://github.com/americanexpress/fabric-integration.git",
         "global": "^4.3.2",
         "nestjs-config": "^1.4.4",
         "reflect-metadata": "^0.1.10",
