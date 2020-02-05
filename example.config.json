@@ -40,6 +40,10 @@
             "connectionProfile": "/opt/suwannee/connection-ibm.json",
             "wallet": "/opt/suwannee/test/Wallet/creds",
             "event_callback_auth": false
+        },
+        "iotaMam": {
+            "nodeUrl": "https://nodes.thetangle.org:443",
+            "seed": "JVQJOVVOIQLVVEVXCEHBPEPCZFRIKMJJZMNDZJMELQYAKTOLNEKHFOFAGXAQWANAXFVDEVTDVUUDTJLHN"
         }
     }
 }

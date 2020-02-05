@@ -51,7 +51,8 @@
         "reflect-metadata": "^0.1.10",
         "rxjs": "^6.3.3",
         "swagger-ui-express": "^4.1.1",
-        "winston": "^3.2.1"
+        "winston": "^3.2.1",
+        "@types/node": "8.10.59"
     },
     "devDependencies": {
         "@commitlint/cli": "^7.5.2",

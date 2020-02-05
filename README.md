@@ -49,6 +49,7 @@ Download and Install
 git clone repo_url
 cd suwannee
 yarn
+./scripts/prepare.sh
 yarn bootstrap
 yarn build
 yarn build:all
