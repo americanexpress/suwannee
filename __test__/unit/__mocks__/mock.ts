@@ -14,7 +14,59 @@
 import sinon from 'sinon';
 import {ConfigService} from 'nestjs-config';
 import {DefaultService} from '../../../src/common/default/Default.service';
+import {Action} from '../../../src/api/model/Action.enum';
 
 export const MockCordaService = sinon.createStubInstance(DefaultService);
 export const MockFabricService = sinon.createStubInstance(DefaultService);
 export const MockConfigService = new ConfigService();
+export const FakeFile: Express.Multer.File = {
+    buffer: new Buffer('empty', 'utf-8'),
+    fieldname: 'empty.zip',
+    filename: 'empty.zip',
+    mimetype: 'zip',
+    originalname: 'empty.zip',
+    encoding: 'utf-8',
+    size: 0,
+    destination: '',
+    path: ''
+};
+export const DeployDevops = {
+    action: Action.deploy,
+    applicationId: 'TEST',
+    applicationContext: 'TEST',
+    language: 'node',
+    version: 'v1.0.0',
+    identity: 'TEST',
+    functionName: 'TEST',
+    functionArguments: ['a'],
+};
+export const DefaultDevops = {
+    action: null,
+    applicationId: 'TEST',
+    applicationContext: 'TEST',
+    language: 'node',
+    version: 'v1.0.0',
+    identity: 'TEST',
+    functionName: 'TEST',
+    functionArguments: ['a'],
+};
+export const UpgradeDevops = {
+    action: Action.upgrade,
+    applicationId: 'TEST',
+    applicationContext: 'TEST',
+    language: 'node',
+    version: 'v1.0.0',
+    identity: 'TEST',
+    functionName: 'TEST',
+    functionArguments: ['a'],
+};
+export const InstantiateDevops = {
+    action: Action.instantiate,
+    applicationId: 'TEST',
+    applicationContext: 'TEST',
+    language: 'node',
+    version: 'v1.0.0',
+    identity: 'TEST',
+    functionName: 'TEST',
+    functionArguments: ['a'],
+};

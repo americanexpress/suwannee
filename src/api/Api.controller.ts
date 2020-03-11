@@ -11,16 +11,19 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-import {Body, Controller, Get, Post, Query, UseFilters, UsePipes} from '@nestjs/common';
-import {ApiBearerAuth, ApiOperation, ApiResponse, ApiUseTags} from '@nestjs/swagger';
+import {Body, Controller, Get, Post, Query, UseFilters, UsePipes, UploadedFile, UseInterceptors} from '@nestjs/common';
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiUseTags, ApiConsumes, ApiImplicitFile} from '@nestjs/swagger';
 import {HttpExceptionFilter} from '../filters/HttpExecption.filter';
 import {ApiService} from './Api.service';
 import {InvokeRequestPayloadDto} from './model/InvokeRequestPayload.dto';
 import {JoiValidationPipe} from '../pipe/JoiValidation.pipe';
 import {InvokeRequestPayloadSchema, QueryRequestPayloadSchema} from './model/RequestPayload.schema';
-import {QUERY_RESPONE, QUERY_PATH, QUERY_API_META_DATA, INVOKE_RESPONE, INVOKE_PATH, INVOKE_API_META_DATA, OK} from './api.constants';
+import {QUERY_RESPONE, QUERY_PATH, QUERY_API_META_DATA, INVOKE_RESPONE, INVOKE_PATH, INVOKE_API_META_DATA, OK, NON_SUPPORTED_ACTION} from './api.constants';
 import {QueryRequestPayloadDto} from './model/QueryRequestPayload.dto';
-
+import {FileInterceptor} from '@nestjs/platform-express';
+import {FileExtentionFilter} from '../filters/FileExtention.filter';
+import {DevopsDto} from './model/Devops.dto';
+import {Action} from './model/Action.enum';
 /**
  * Class of ApiController
  *
@@ -89,5 +92,15 @@ export class ApiController {
             requestPayloadDto.eventName,
             requestPayloadDto.callBackUrl
         );
+    }
+    @Post('devops')
+    @UseInterceptors(FileInterceptor('contract', {fileFilter: FileExtentionFilter}))
+    @ApiConsumes('multipart/form-data')
+    @ApiImplicitFile({name: 'contract', required: false, description: 'upload the contract'})
+    async devops(@Body() devops: DevopsDto, @UploadedFile() contract) {
+        if (devops.action in Action) {
+            return this.apiService.devops(devops, contract);
+        }
+        throw new Error(NON_SUPPORTED_ACTION);
     }
 }

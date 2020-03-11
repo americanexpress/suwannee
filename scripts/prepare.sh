@@ -1,11 +1,13 @@
 #!/bin/bash
 # To build all modules
 cd ./packages/dlt
-yarn build
+yarn && yarn build
 cd ../logger
-yarn build
+yarn && yarn build
 echo "prepare done"
 cd ../corda
-yarn build
+yarn && yarn build
 cd ../fabric
-yarn build
+yarn && yarn build
+cd ../iotaMam
+yarn && yarn build

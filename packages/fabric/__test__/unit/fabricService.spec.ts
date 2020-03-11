@@ -17,6 +17,8 @@ import chaiAsPromised from 'chai-as-promised';
 import {MockGateway} from './__mocks__/mock';
 import chai, {expect} from 'chai';
 import {ConfigService} from 'nestjs-config';
+import {INSTALL_ERROR, INSTANTIATION_ERROR} from '../../src/fabric.constants';
+import {UPGRADE_ERROR} from '../../src/fabric.constants';
 
 chai.use(chaiAsPromised);
 
@@ -191,11 +193,9 @@ describe('#fabricService', () => {
                                             });
                                         });
                                     },
-                                    addEventListner: (a, fakeCallback) => {
-                                        fakeCallback(false, [{'payload': 'd'}], 1, 3);
+                                    setTransactionOptions: (fake) => {
+                                        return fake;
                                     },
-                                    // tslint:disable-next-line: no-empty
-                                    setTransient: () => {},
                                     submit: () => {
                                         return new Promise(resolves => {
                                             resolves({
@@ -228,12 +228,9 @@ describe('#fabricService', () => {
                                             });
                                         });
                                     },
-                                    addEventListner: (a, fakeCallback) => {
-
-                                        fakeCallback(false, {payload: 62}, 1, 3);
+                                    setTransactionOptions: (a) => {
+                                        a.txnCustomEvent[0].callback(false, {payload: 'd'}, 1, 3);
                                     },
-                                    // tslint:disable-next-line: no-empty
-                                    setTransient: () => {},
                                     submit: () => {
                                         return new Promise(resolves => {
                                             resolves({
@@ -252,7 +249,7 @@ describe('#fabricService', () => {
 
             MockGateway.getNetwork.reset();
         });
-        it('9)Test event call back ,Query and invoke should return an error when an error occured in the event webhook ',
+        it('9)Test event call back ,Query and invoke should return an error when an error occured in the event webhook',
             async () => {
                 MockGateway.getNetwork.resolves({
                     getContract: jk => {
@@ -267,11 +264,9 @@ describe('#fabricService', () => {
                                                 });
                                             });
                                         },
-                                        addEventListner: (a, fakeCallback) => {
-                                            fakeCallback(new Error('error in the event'), {payload: 62}, 1, 3);
+                                        setTransactionOptions: (a) => {
+                                            a.txnCustomEvent[0].callback(true, {payload: 62}, 1, 3);
                                         },
-                                        // tslint:disable-next-line: no-empty
-                                        setTransient: () => {},
                                         submit: () => {
                                             return new Promise(resolves => {
                                                 resolves({
@@ -287,9 +282,140 @@ describe('#fabricService', () => {
                 });
                 const result = ['test'];
                 expect(await fabricService.invoke('b', ['c'], 'd', 'jk', 'bh', {'test': Buffer.from('val')}, 'TEST_EVENT', 'http://localhost:3000/')).to.be.eql(result);
-                expect(await fabricService.query('b', ['c'], 'd', 'jk', 'bh', {'test': Buffer.from('val')})).to.be.eql(result);
                 MockGateway.getNetwork.reset();
             });
+        it('10)Deploy/install a chaincode should be sucessful ', async () => {
+            MockGateway.getNetwork.resolves({
+                installContract: (a, b, c, d) => {
+                    return new Promise(resolve => {
+                        resolve({
+                            payload: ['success']
+                        });
+                    });
+                }
+            });
+            const FakeFile: Express.Multer.File = {
+                buffer: new Buffer('empty', 'utf-8'),
+                fieldname: 'empty.zip',
+                filename: 'empty.zip',
+                mimetype: 'zip',
+                originalname: 'empty.zip',
+                encoding: 'utf-8',
+                size: 0,
+                destination: '',
+                path: ''
+            };
+            const Resp = await fabricService.deploy(FakeFile, 'c', 'd', 'jk', 'bh');
+            expect(Resp.payload[0]).to.be.equal('success');
+            MockGateway.getNetwork.reset();
+        });
+        it('11)Upgrade  chaincode should be sucessful ', async () => {
+            MockGateway.getNetwork.resolves({
+                upgradeContract: (a, b, c, d) => {
+                    return new Promise(resolve => {
+                        resolve({
+                            payload: ['success']
+                        });
+                    });
+                }
+            });
 
+            const Resp = await fabricService.upgrade('c', 'd', 'jk', ['bh'], 's');
+            expect(Resp.payload[0]).to.be.equal('success');
+            MockGateway.getNetwork.reset();
+        });
+        it('12)Instantiate  chaincode should be sucessful ', async () => {
+            MockGateway.getNetwork.resolves({
+                instantiateContract: (a, b, c, d) => {
+                    return new Promise(resolve => {
+                        resolve({
+                            payload: ['success']
+                        });
+                    });
+                }
+            });
+
+            const Resp = await fabricService.instantiate('c', 'd', 'jk', ['bh'], 's');
+            console.log(Resp);
+            expect(Resp.payload[0]).to.be.equal('success');
+            MockGateway.getNetwork.reset();
+        });
+        it('13)Deploy/install a chaincode should be failed ', async () => {
+            MockGateway.getNetwork.resolves({
+                installContract: (a, b, c, d) => {
+                    throw 'error';
+                }
+            });
+            const FakeFile: Express.Multer.File = {
+                buffer: new Buffer('empty', 'utf-8'),
+                fieldname: 'empty.zip',
+                filename: 'empty.zip',
+                mimetype: 'zip',
+                originalname: 'empty.zip',
+                encoding: 'utf-8',
+                size: 0,
+                destination: '',
+                path: ''
+            };
+            const Resp = await fabricService.deploy(FakeFile, 'c', 'd', 'jk', 'bh');
+            expect(Resp).to.be.equal(INSTALL_ERROR);
+            MockGateway.getNetwork.reset();
+        });
+        it('14)Instantiate  chaincode should be failed ', async () => {
+            MockGateway.getNetwork.resolves({
+                instantiateContract: (a, b, c, d) => {
+                    throw 'error';
+                }
+            });
+
+            const Resp = await fabricService.instantiate('c', 'd', 'jk', ['bh'], 's');
+            expect(Resp).to.be.equal(INSTANTIATION_ERROR);
+            MockGateway.getNetwork.reset();
+        });
+        it('15)Upgrade  chaincode should be failed ', async () => {
+            MockGateway.getNetwork.resolves({
+                upgradeContract: (a, b, c, d) => {
+                    throw 'error';
+                }
+            });
+            const Resp = await fabricService.upgrade('c', 'd', 'jk', ['bh'], 's');
+            expect(Resp).to.be.equal(UPGRADE_ERROR);
+            MockGateway.getNetwork.reset();
+        });
+        it('16)Test event call back ,Query and invoke should return an error when an error occured in the event webhook',
+            async () => {
+                MockGateway.getNetwork.resolves({
+                    getContract: jk => {
+                        return new Promise(resolve => {
+                            resolve({
+                                createTransaction: fg => {
+                                    return {
+                                        evaluate: () => {
+                                            return new Promise(resolves => {
+                                                resolves({
+                                                    payload: ['test']
+                                                });
+                                            });
+                                        },
+                                        setTransactionOptions: (fakeOptions) => {
+                                            return fakeOptions;
+                                        },
+                                        submit: () => {
+                                            return new Promise(resolves => {
+                                                resolves({
+                                                    payload: ['test']
+                                                });
+                                            });
+                                        }
+                                    };
+                                }
+                            });
+                        });
+                    }
+                });
+                const result = ['test'];
+                expect(await fabricService.invoke('b', ['c'], 'd', 'jk', 'bh', {'test': Buffer.from('val')})).to.be.eql(result);
+                MockGateway.getNetwork.reset();
+            });
     });
 });

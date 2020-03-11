@@ -15,11 +15,12 @@ import {Injectable} from '@nestjs/common';
 import fabricIntegration from 'fabric-integration';
 import {ConfigService} from 'nestjs-config';
 import {DLTService} from '@suwannee/dlt';
-import {CONFIG, ERROR_MSG, ERROR, LOGGER_LABEL, BLOCK_MSG} from './fabric.constants';
+import {CONFIG, ERROR_MSG, ERROR, LOGGER_LABEL, BLOCK_MSG, INSTANTIATION_ERROR, INSTALL_ERROR} from './fabric.constants';
 import {LoggerService} from '@suwannee/logger';
 import {requestHelper} from './helper/request.helper';
 import {TransientMap} from 'fabric-integration/dist/types';
 import {TX_MSG} from './fabric.constants';
+import {UPGRADE_ERROR} from './fabric.constants';
 
 /**
  * Fabric Service class, to connect to hyperledger fabric baas network
@@ -61,7 +62,7 @@ export class FabricService implements DLTService {
         const contract = await network.getContract(chaincodeId);
         const transaction = contract.createTransaction(fn);
         if (transientdata) {
-            transaction.setTransient(transientdata);
+            transaction.setTransactionOptions({transiantMap: transientdata});
         }
         const result = !args ? await transaction.evaluate() : await transaction.evaluate(...args);
         if (result.payload[0].includes(ERROR)) {
@@ -94,26 +95,71 @@ export class FabricService implements DLTService {
         const contract = await network.getContract(chaincodeId);
         const transaction = contract.createTransaction(fn);
         if (eventName) {
-            transaction.addEventListner(eventName, (err, event, block, txid) => {
-                this.log.info(`${TX_MSG} ${txid} \n ${BLOCK_MSG} ${block}`);
-                if (err) {
-                    this.log.error(err.message);
-                    return requestHelper(callBackUrl, {error: err.message, txid: txid, block: block}, this.config.event_callback_auth);
-                } else {
-                    const data = {eventPayload: event.payload.toString(), txid: txid, block: block};
-                    return requestHelper(callBackUrl, data, this.config.event_callback_auth);
-                }
+            transaction.setTransactionOptions({
+                txnCustomEvent: [{
+                    eventName: eventName, callback: (err, event, block, txid) => {
+                        this.log.info(`${TX_MSG} ${txid} \n ${BLOCK_MSG} ${block}`);
+                        if (err) {
+                            this.log.error(err.message);
+                            return requestHelper(callBackUrl, {error: err.message, txid: txid, block: block}, this.config.event_callback_auth);
+                        } else {
+                            const data = {eventPayload: event.payload.toString(), txid: txid, block: block};
+                            return requestHelper(callBackUrl, data, this.config.event_callback_auth);
+                        }
+                    },
+                },],
+                transiantMap: transientdata
             },
+
             );
-        }
-        if (transientdata) {
-            transaction.setTransient(transientdata);
+        } else if (transientdata) {
+            transaction.setTransactionOptions({transiantMap: transientdata});
         }
         const result = await transaction.submit(...args);
+        console.log(result);
         if (result.payload[0].includes(ERROR)) {
             this.log.error(ERROR_MSG);
             throw new Error(result.payload[0]);
         }
         return result.payload;
+    }
+    public async deploy(chaincode: Express.Multer.File, chaincodeId: string, chaincodeSpec: any, channelName: string, identity: string): Promise<any> {
+        try {
+            await this.gateway.connect(this.config.connectionProfile, {
+                identity,
+                keystore: this.config.wallet,
+            });
+            const network = await this.gateway.getNetwork(channelName);
+            return await network.installContract(chaincodeId, chaincode.buffer, chaincodeSpec);
+        } catch (e) {
+            this.log.error(e.message);
+            return INSTALL_ERROR;
+        }
+    }
+    public async upgrade(chaincodeId: string, chaincodeSpec: any, fn?: string, functionArgs?: any[], channelName?: string, identity?: string): Promise<any> {
+        try {
+            await this.gateway.connect(this.config.connectionProfile, {
+                identity,
+                keystore: this.config.wallet,
+            });
+            const network = await this.gateway.getNetwork(channelName);
+            return await network.upgradeContract(chaincodeId, chaincodeSpec, fn, functionArgs);
+        } catch (e) {
+            this.log.error(e.message);
+            return UPGRADE_ERROR;
+        }
+    }
+    public async instantiate(chaincodeId: string, chaincodeSpec: any, fn?: string, functionArgs?: any[], channelName?: string, identity?: string): Promise<any> {
+        try {
+            await this.gateway.connect(this.config.connectionProfile, {
+                identity,
+                keystore: this.config.wallet,
+            });
+            const network = await this.gateway.getNetwork(channelName);
+            return await network.instantiateContract(chaincodeId, chaincodeSpec, fn, functionArgs);
+        } catch (e) {
+            this.log.error(e.message);
+            return INSTANTIATION_ERROR;
+        }
     }
 }

@@ -22,7 +22,6 @@
     "dependencies": {
         "@nestjs/common": "^6.7.2",
         "@suwannee/logger": "file:../logger",
-        "@suwannee/dlt": "file:../dlt",
         "nestjs-config": "^1.4.4",
         "twizt": "https://github.com/americanexpress/twizt.git"
     },
@@ -34,6 +33,7 @@
         "@babel/register": "^7.0.0",
         "@commitlint/cli": "^7.5.2",
         "@commitlint/config-conventional": "^7.5.0",
+        "@suwannee/dlt": "file:./../dlt",
         "@nestjs/testing": "^6.7.2",
         "@types/auth0-js": "^8.11.5",
         "@types/body-parser": "^1.16.8",

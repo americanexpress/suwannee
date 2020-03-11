@@ -13,6 +13,10 @@
  */
 import {Injectable, Inject} from '@nestjs/common';
 import {DLTService} from '@suwannee/dlt';
+import {DevopsDto} from './model/Devops.dto';
+import {Action} from './model/Action.enum';
+import path = require('path');
+import {NON_SUPPORTED_ACTION, UPLOAD_SMART_CONTRACT} from './api.constants';
 /**
  * Class of ApiService
  *
@@ -80,5 +84,31 @@ export class ApiService {
 
         return this.blochainService.invoke(functionName, functionArguments, applicationId,
             applicationContext, identity, transientData, eventName, callBackUrl);
+    }
+    public async devops(devops: DevopsDto, contract?: Express.Multer.File) {
+        const Spec = {
+            language: devops.language, version: devops.version,
+            uploadType: contract ? path.extname(contract.originalname).substr(1) : null
+        };
+        switch (devops.action) {
+            case Action.deploy:
+                if (!contract) {
+                    throw new Error(UPLOAD_SMART_CONTRACT);
+                }
+                return this.blochainService.deploy(
+                    contract, devops.applicationId, Spec, devops.applicationContext, devops.identity
+                );
+            case Action.upgrade:
+                return this.blochainService.upgrade(
+                    devops.applicationId, Spec, devops.functionName, devops.functionArguments, devops.applicationContext, devops.identity
+                );
+            case Action.instantiate:
+                return this.blochainService.instantiate(
+                    devops.applicationId, Spec, devops.functionName, devops.functionArguments, devops.applicationContext, devops.identity
+                );
+            default:
+                throw new Error(NON_SUPPORTED_ACTION);
+
+        }
     }
 }

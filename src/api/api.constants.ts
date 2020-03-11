@@ -43,3 +43,5 @@ export const INVOKE_API_META_DATA = {
 };
 
 export const OK = 'ok';
+export const NON_SUPPORTED_ACTION = `use one of these actions ['deploy', 'upgrade', 'instantiate']`;
+export const UPLOAD_SMART_CONTRACT = 'Please upload a smart contract and try again';

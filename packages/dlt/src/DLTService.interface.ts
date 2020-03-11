@@ -14,4 +14,7 @@
 export interface DLTService {
     query(fn: string, args?: string[], smartContractId?: string, contractContext?: string, identity?: string, transientdata?: any): any;
     invoke(fn: string, args: string[], smartContractId?: string, contractContext?: string, identity?: string, transientdata?: any, eventName?: string, callBackUrl?: string): any;
+    deploy?(smartContract: Express.Multer.File, smartContractId: string, spec: any, contractContext?: string, identity?: string): any;
+    upgrade?(smartContractId: string, spec: any, fn?: string, functionArgs?: any[], contractContext?: string, identity?: string): any;
+    instantiate?(smartContractId: string, spec: any, fn?: string, functionArgs?: any[], contractContext?: string, identity?: string): any;
 }

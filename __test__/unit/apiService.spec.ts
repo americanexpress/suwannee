@@ -14,10 +14,10 @@
 import {ApiService} from './../../src/api/Api.service';
 import {describe, it} from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
-import {MockFabricService, MockConfigService, MockCordaService} from './__mocks__/mock';
+import {MockFabricService, MockConfigService, MockCordaService, FakeFile, DefaultDevops, DeployDevops, UpgradeDevops, InstantiateDevops} from './__mocks__/mock';
 import chai, {expect} from 'chai';
 import config from '../../src/common/config/app.config';
-
+import {UPLOAD_SMART_CONTRACT, NON_SUPPORTED_ACTION} from '../../src/api/api.constants';
 chai.use(chaiAsPromised);
 
 describe('#apiService', () => {
@@ -59,9 +59,33 @@ describe('#apiService', () => {
             return expect(apiService.invoke('a', ['b'], 'c', 'd', 'e')).to.be.rejected;
         });
     });
-
     describe('#test app config', () => {
         expect(config.useSSL()).to.eqls(false);
     });
-
+    describe('#Deploy', () => {
+        it('Deploy , should return success ', async () => {
+            apiService = new ApiService(MockFabricService);
+            MockFabricService.deploy.resolves('success');
+            return expect(apiService.devops(DeployDevops, FakeFile)).eventually.to.equal('success');
+        });
+        it('Deploy , should return error with no contract is uploaded ', async () => {
+            apiService = new ApiService(MockFabricService);
+            MockFabricService.deploy.resolves('success');
+            return expect(apiService.devops(DeployDevops)).eventually.to.be.rejected.with.an.instanceOf(Error, UPLOAD_SMART_CONTRACT);
+        });
+        it('Upgrade , should return success ', async () => {
+            apiService = new ApiService(MockFabricService);
+            MockFabricService.upgrade.resolves('success');
+            return expect(apiService.devops(UpgradeDevops)).eventually.to.equal('success');
+        });
+        it('Instantiate , should return success ', async () => {
+            apiService = new ApiService(MockFabricService);
+            MockFabricService.instantiate.resolves('success');
+            return expect(apiService.devops(InstantiateDevops)).eventually.to.equal('success');
+        });
+        it('Default , should return error ', async () => {
+            apiService = new ApiService(MockFabricService);
+            return expect(apiService.devops(DefaultDevops)).eventually.to.be.rejected.with.an.instanceOf(Error, NON_SUPPORTED_ACTION);
+        });
+    });
 });

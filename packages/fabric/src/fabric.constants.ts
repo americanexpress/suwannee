@@ -21,3 +21,6 @@ export const POST = 'POST';
 export const SHA256 = 'sha256';
 export const UTF_8 = 'utf8';
 export const BASE_64 = 'base64';
+export const INSTALL_ERROR = 'Error occured while installing the chaincode';
+export const INSTANTIATION_ERROR = 'Error occured while instantiating the chaincode';
+export const UPGRADE_ERROR = 'Error occured while upgrading the chaincode';

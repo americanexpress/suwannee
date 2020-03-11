@@ -18,5 +18,13 @@
         },
         "cacheDir": ".changelog"
     },
-    "useWorkspaces": true
+    "useWorkspaces": false,
+    "command": {
+        "bootstrap": {
+            "ignore": "@suwannee/iotaMam"
+        },
+        "test:all": {
+            "ignore": "@suwannee/iotaMam"
+        }
+    }
 }

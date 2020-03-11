@@ -22,11 +22,13 @@
         "braid-client": "^3.3.1-20181219142722288",
         "nestjs-config": "^1.4.4",
         "reflect-metadata": "^0.1.10",
-        "rxjs": "^6.3.3"
+        "rxjs": "^6.3.3",
+        "@suwannee/logger": "file:./../logger"
     },
     "devDependencies": {
         "@commitlint/cli": "^7.5.2",
         "@commitlint/config-conventional": "^7.5.0",
+        "@suwannee/dlt": "file:./../dlt",
         "@types/chai": "^4.1.7",
         "@types/chai-as-promised": "^7.1.0",
         "@types/dotenv": "^6.1.1",

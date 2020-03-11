@@ -17,6 +17,7 @@
     "scripts": {
         "lint": "node_modules/.bin/tslint -p tsconfig.json",
         "build": "tsc -p .",
+        "prepare": "yarn build",
         "refresh": "rm -rf ./node_modules ./yarn.lock && yarn",
         "start": "ts-node -r tsconfig-paths/register src/main.ts",
         "test": "echo nothing to test here",
@@ -24,6 +25,7 @@
         "docs": "./node_modules/.bin/typedoc --out docs --mode modules"
     },
     "dependencies": {
+        "@types/node": "^12.12.14",
         "express": "^4.16.3",
         "express-winston": "^3.3.0",
         "morgan": "^1.9.1",

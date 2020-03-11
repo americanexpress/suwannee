@@ -18,7 +18,8 @@ import chai, {expect} from 'chai';
 import {describe, beforeEach, it} from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-
+import {DeployDevops, FakeFile, DefaultDevops} from './__mocks__/mock';
+import {NON_SUPPORTED_ACTION} from '../../src/api/api.constants';
 
 chai.use(chaiAsPromised);
 
@@ -71,6 +72,23 @@ describe('#ApiController', () => {
     describe('##Health check', () => {
         it('3)should return ok', async () => {
             expect(await apiController.healthCheck()).to.eql('ok');
+        });
+
+    });
+    describe('##devops', () => {
+        it('4)should deploy contract sucessFully', async () => {
+            MockApiService.devops.resolves(result);
+            expect(await apiController.devops(DeployDevops, FakeFile)).to.eql(result);
+            MockApiService.invoke.reset();
+        });
+        it('5)should return an error if a non supported devops action is selected', async () => {
+            try {
+                await apiController.devops(DefaultDevops, FakeFile);
+            } catch (e) {
+                expect(e).to.be.an.instanceOf(Error, NON_SUPPORTED_ACTION);
+            }
+
+            MockApiService.invoke.reset();
         });
 
     });
