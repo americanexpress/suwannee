@@ -30,7 +30,7 @@
         "body-parser": "^1.18.3",
         "braid-client": "^3.3.1-20181219142722288",
         "chalk": "^2.4.1",
-        "class-transformer": "^0.1.9",
+        "class-transformer": "^0.3.1",
         "class-validator": "^0.8.5",
         "clear": "^0.1.0",
         "commander": "^2.11.0",
