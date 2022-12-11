@@ -36,7 +36,7 @@
         "commander": "^2.11.0",
         "commander-ts": "^0.1.5",
         "dotenv": "^7.0.0",
-        "express": "^4.16.3",
+        "express": "^4.17.3",
         "express-winston": "^3.3.0",
         "fabric-integration": "https://github.com/americanexpress/fabric-integration.git",
         "figlet": "^1.2.1",
