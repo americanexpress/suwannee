@@ -31,7 +31,7 @@
         "braid-client": "^3.3.1-20181219142722288",
         "chalk": "^2.4.1",
         "class-transformer": "^0.1.9",
-        "class-validator": "^0.8.5",
+        "class-validator": "^0.14.0",
         "clear": "^0.1.0",
         "commander": "^2.11.0",
         "commander-ts": "^0.1.5",
